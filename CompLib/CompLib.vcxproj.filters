@@ -30,12 +30,24 @@
     <ClInclude Include="include\Complib\Database.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Complib\Text2Records.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\libDefs\Error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Database.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Text2Records.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
