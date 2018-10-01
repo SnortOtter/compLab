@@ -5,13 +5,14 @@
 
 #include "CompDefs.h"
 
+
 template<typename T>
 class QuickPercentile
 {
 public:
 
 	template<typename T>
-	QuickPercentile(T *new_data, size_t count)
+	QuickPercentile(T new_data, size_t count)
 	{
 		data = new_data;
 		length = count;
@@ -138,7 +139,7 @@ private:
 
 	private:
 
-	T *data;
+	T data;
 	size_t length;
 	index_t last_pivot;
 };

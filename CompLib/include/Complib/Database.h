@@ -26,9 +26,8 @@ public:
 		return true;
 	}
 
-	template <typename R>
 	template <typename T>
-	std::vector<T> SelectWhere(T (R::*memberPtr), std::function<bool(compRecord_t)> f_where)
+	std::vector<T> SelectWhere(T (R::*field), std::function<bool(compRecord_t)> f_where)
 	{
 		std::vector<T> data;
 
@@ -40,9 +39,8 @@ public:
 		return data;
 	}
 
-	template <typename R>
 	template <typename T>
-	std::vector<T> Select(T R::* field)
+	std::vector<T> Select(T R::* field) const 
 	{
 		std::vector<T> data;
 
