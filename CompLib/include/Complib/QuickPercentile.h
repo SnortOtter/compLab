@@ -9,6 +9,12 @@
 template<typename T>
 class QuickPercentile
 {
+private:
+
+	T data;
+	size_t length;
+	index_t last_pivot;
+
 public:
 
 	template<typename T>
@@ -24,19 +30,18 @@ public:
 		return data[b];
 	}
 
-	template<typename T>
 	double SelectPercentile(double percentile)   //convert a percentile 0.0 to 1.0 to the kth element
 	{
 		if (percentile < 0.0 || percentile > 1.0)   //invalid percentile
 			return -1.0;
 
-		if (percentile == 1.0)  //max. element for 100th percentile
-			return std::max(data);
+		//if (percentile == 1.0)  //max. element for 100th percentile
+		//	return std::max(data);
 
-		if (percentile == 0.0)  //min. element for 0th percentile
-			return std::min(data);
+		//if (percentile == 0.0)  //min. element for 0th percentile
+		//	return std::min(data);
 
-		double lowerIndexContinuous = percentile * static_cast<double>(data.size() - 1);     //get percentile location across continuous range
+		double lowerIndexContinuous = percentile * static_cast<double>(length - 1);     //get percentile location across continuous range
 		index_t setIndex = static_cast<int>(std::floor(lowerIndexContinuous));               //get the lowest integer element this can be
 		double interpolateFactor = lowerIndexContinuous - static_cast<double>(setIndex);        //work out interpolation factor for element above
 
@@ -44,7 +49,7 @@ public:
 
 		if (interpolateFactor > 0.0 && (setIndex + 1 + 1) < data.size())
 		{
-			percentileResult = percentileResult + (interpolateFactor * NextHighestElement(last_pivot)); // scan to right of last pivot value for next highest element
+			percentileResult = percentileResult + (interpolateFactor * data[NextHighestElement(last_pivot)]); // scan to right of last pivot value for next highest element
 		}
 
 		return percentileResult;        //SelectElement(oldelementindex);
@@ -52,18 +57,21 @@ public:
 
 private:
 
-	template<typename T>
-	T NextHighestElement(index_t final_pivot)
+	index_t NextHighestElement(index_t final_pivot)
 	{
 		T smallest = data[final_pivot + 1];
+		index_t index_of_smallest = final_pivot + 1;
 
 		for (int i = final_pivot + 1; i < data.size(); i++)
 			if (data[i] < smallest)
+			{
 				smallest = data[i];
-		return smallest;
+				index_of_smallest = i;
+			}
+		return index_of_smallest;
 	}
 
-	template<typename T>
+	// TODO: alter to return index f element within data
 	T SelectElement(index_t k)  //indexes from 1
 	{
 		if (data.size() == 1) //if only one element, return it
@@ -136,10 +144,4 @@ private:
 		
 		return mid;
 	}
-
-	private:
-
-	T data;
-	size_t length;
-	index_t last_pivot;
 };
