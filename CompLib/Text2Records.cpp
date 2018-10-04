@@ -6,6 +6,11 @@
 
 #include "libDefs/Error.h"
 
+std::string Text2Records::SourceFile() const
+{
+	return path;
+}
+
 int32_t Text2Records::ReadFile(std::string path)
 {
 	std::ifstream t(path);
@@ -18,6 +23,8 @@ int32_t Text2Records::ReadFile(std::string path)
 	if (0 == string_buffer.rdbuf()->in_avail())
 		return Error::E_ERROR;
 
+	this->path = path;
+
 	return Error::S_OK;
 }
 
@@ -29,14 +36,16 @@ int32_t Text2Records::ParseToRecords()
 	if (0 == string_buffer.rdbuf()->in_avail())
 		return Error::E_ERROR;
 
-	parsed_records.clear();
+	parsed_records.release();
+	parsed_records = std::make_unique<std::vector<compRecord_t>>();
 
 	std::string line_text;
 
 	while (std::getline(string_buffer, line_text, '\n')) {
 		
 		std::stringstream line_text_stream(line_text);
-		std::vector<std::string> line_elements(8);
+		std::vector<std::string> line_elements;
+		line_elements.reserve(8);	// we know the vector length so save on dynamic expansions
 		std::string s;
 
 		while (std::getline(line_text_stream, s, ','))
@@ -56,6 +65,7 @@ int32_t Text2Records::ParseToRecords()
 		rec.bonus_previous = std::stoul(line_elements[5], nullptr, 10);
 		rec.lunches_current = std::stoul(line_elements[6], nullptr, 10);
 		rec.lunches_previous = std::stoul(line_elements[7], nullptr, 10);
+		parsed_records->push_back(rec);
 	}
 
 	return Error::S_OK;

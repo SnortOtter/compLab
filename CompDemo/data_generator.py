@@ -43,7 +43,7 @@ def main():
                     type=int)
     parser.add_argument("-c","--companies", default=25,  help="companies to generate",
                     type=int)
-    parser.add_argument("-o","--output", default="comp_records.txt", help="output file name",
+    parser.add_argument("-o","--output", default="comp_records", help="output file name",
                     type=str)
     parser.add_argument("-v","--verbose", action='store_true', help="print records after creation")
 
@@ -67,7 +67,7 @@ def main():
             attrs = vars(r) 
             print ', '.join("%s: %s" % item for item in attrs.items())
 
-    output_file = open(output_filename, "w")
+    output_file = open(output_filename + ".db", "w")
 
     for r in data_records:
         #ugly but we can't preserve declaraation order :()
