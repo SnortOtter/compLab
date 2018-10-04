@@ -32,9 +32,10 @@ public:
 
 	double SelectPercentile(double percentile)   //convert a percentile 0.0 to 1.0 to the kth element
 	{
-		if (percentile < 0.0 || percentile > 1.0)   //invalid percentile
+		if (percentile < 0.0 || percentile > 100.0)   //invalid percentile
 			return -1.0;
 
+		percentile = percentile / 100.0;
 		//if (percentile == 1.0)  //max. element for 100th percentile
 		//	return std::max(data);
 
@@ -45,9 +46,9 @@ public:
 		index_t setIndex = static_cast<int>(std::floor(lowerIndexContinuous));               //get the lowest integer element this can be
 		double interpolateFactor = lowerIndexContinuous - static_cast<double>(setIndex);        //work out interpolation factor for element above
 
-		double percentileResult = SelectElement(setIndex + 1) * (1.0 - interpolateFactor);
+		double percentileResult = data[SelectElement(setIndex + 1)] * (1.0 - interpolateFactor);
 
-		if (interpolateFactor > 0.0 && (setIndex + 1 + 1) < data.size())
+		if (interpolateFactor > 0.0 && (setIndex + 1 + 1) < length)
 		{
 			percentileResult = percentileResult + (interpolateFactor * data[NextHighestElement(last_pivot)]); // scan to right of last pivot value for next highest element
 		}
@@ -59,10 +60,11 @@ private:
 
 	index_t NextHighestElement(index_t final_pivot)
 	{
-		T smallest = data[final_pivot + 1];
+		//type deduction
+		auto smallest = data[final_pivot + 1];
 		index_t index_of_smallest = final_pivot + 1;
 
-		for (int i = final_pivot + 1; i < data.size(); i++)
+		for (index_t i = final_pivot + 1; i < length; i++)
 			if (data[i] < smallest)
 			{
 				smallest = data[i];
@@ -72,16 +74,16 @@ private:
 	}
 
 	// TODO: alter to return index f element within data
-	T SelectElement(index_t k)  //indexes from 1
+	index_t SelectElement(index_t k)  //indexes from 1
 	{
-		if (data.size() == 1) //if only one element, return it
+		if (length == 1) //if only one element, return it
 			return data[0];
 
-		if (k > data.size() - 1)  //if greater than number of elements, return highest element
-			k = data.size() - 1;
+		if (k > length - 1)  //if greater than number of elements, return highest element
+			k = length - 1;
 
 		index_t left = 0;                   //initial list bounds
-		index_t right = data.Count - 1;
+		index_t right = length - 1;
 
 		while (true)    //repeatedly partition until we pivot on the kth element
 		{
@@ -91,7 +93,7 @@ private:
 			if (pivotDistance == k) //if we pivoted on the desired kth number, return element k
 			{
 				last_pivot = newPivot;
-				return data[newPivot];
+				return newPivot;
 			}
 			else if (k < pivotDistance) //if we pivoted above that number
 			{
@@ -106,12 +108,11 @@ private:
 
 	}
 
-	template<typename T>
 	index_t PartitionList(index_t left, index_t right)  //partition the list based on a random pivot element
 	{
 		index_t pivotIndex = MedianOfThreePivot(left, right); 
 		index_t storeIndex = left;
-		T pivotValue = data[pivotIndex];
+		auto pivotValue = data[pivotIndex];
 		std::swap(data[pivotIndex], data[right]);
 		
 		for (index_t i = left; i < right; i++)   //from first to last but one element (last now contains pivot)
@@ -128,7 +129,6 @@ private:
 		return storeIndex;  //return index of pivot in newly partitioned list
 	}
 
-	template<typename T>
 	index_t MedianOfThreePivot(index_t left, index_t right) //should avoid natural pathological cases for pivot
 	{
 		index_t mid = (left + right) / 2;
